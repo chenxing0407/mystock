@@ -1,20 +1,10 @@
-# mystock
+import easyquotation
 
-表结构
-cjmx: code,price,count,amount,zd,time,type(B,S,M)
-stock_info: code,liutong,total,pe,pb
-history:id,buy_at,buy_price,buy_count,buy_amount,sell_at,sell_price,sell_count,
-        sell_amount,sy(收益)
+qq = easyquotation.use('sina')
 
+print(qq.stocks('gb_$dji'))
 
-
-思路：
-根据cjmx 来判断，如果一段时间diff 超过一定值A，查看当时的macd rsi等指标
-发出buy 指令，记录buy记录，模拟买
-
-成交明细
-http://vip.stock.finance.sina.com.cn/quotes_service/view/vMS_tradedetail.php?symbol=sh600926&date=2017-06-01&page=53
-
+# curl 'http://hq.sinajs.cn/rn=1497019696583&list=gb_$dji,gb_ixic,gb_$inx,hf_GC,hf_CL,DINIW,s_sh000001,rt_hkHSI,b_NKY' -H 'Accept: */*' -H 'Accept-Encoding: gzip, deflate' -H 'Accept-Language: en-US,en;q=0.5' -H 'Connection: keep-alive' -H 'Host: hq.sinajs.cn' -H 'Referer: http://stock.finance.sina.com.cn/usstock/quotes/CCCL.html' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'
 '''
 {'600926': {'name': '杭州银行', 'code': '600926', 'now': 21.6, 'close': 21.35,
 'open': 21.24, 'volume': 16328600.0, 'bid_volume': 8190000, 'ask_volume': 8138600.0,
@@ -37,7 +27,13 @@ http://vip.stock.finance.sina.com.cn/quotes_service/view/vMS_tradedetail.php?sym
 '''
 
 
+'''
+{'600926': {'name': '杭州银行', 'open': 15.6, 'close': 15.69, 'now': 15.6, 'high': 15.6, 'low': 15.6, 'buy': 15.58,
+'sell': 15.6, 'turnover': 116600, 'volume': 1818960.0,
+'bid1_volume': 14400, 'bid1': 15.58, 'bid2_volume': 27800, 'bid2': 15.57, 'bid3_volume': 5000, 'bid3': 15.56,
+'bid4_volume': 13100, 'bid4': 15.55, 'bid5_volume': 200, 'bid5': 15.54,
+'ask1_volume': 11300, 'ask1': 15.6, 'ask2_volume': 8100, 'ask2': 15.61, 'ask3_volume': 23280, 'ask3': 15.62,
+'ask4_volume': 3100, 'ask4': 15.63, 'ask5_volume': 3100, 'ask5': 15.65, 'date': '2017-06-08', 'time': '09:26:25'}}
 
 
-
-
+'''
