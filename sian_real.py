@@ -8,6 +8,9 @@ import datetime
 import os
 import easyutils
 
+from db.util import get_session
+from db.util import StockDaDantHistory
+
 last_check = {}
 NOW = datetime.datetime.now()
 KP = NOW.replace(hour=9, minute=25)
@@ -18,6 +21,7 @@ THREE = NOW.replace(hour=15, minute=1)
 DATA_DIR = '/root/stock_data/'
 # DATA_DIR = 'c:'
 data_dir = DATA_DIR + os.sep + str(datetime.date.today())
+
 
 
 '''
@@ -65,7 +69,17 @@ else:
    B
 
 '''
+
+def add_to_db(dadan):
+    print('over %s' % VALVE)
+    sess = get_session()
+    sess.begin()
+    sess.add(dadan)
+    sess.commit()
+
+VALVE = 50*10000
 def get_real(candi):
+    sess = get_session()
     mydata = threading.local()
     mydata.BUY_COMMAND = {}
     mydata.SELL_COMMAND = {}
@@ -80,7 +94,7 @@ def get_real(candi):
             time.sleep(10)
             now = datetime.datetime.now()
         if now > THREE:
-            time.sleep(36000)
+            time.sleep(600)
         for code, st in sina.stocks(candi).items():
             try:
                 if st['name'] not in last_check:
@@ -101,7 +115,12 @@ def get_real(candi):
                                 if st['buy'] > last_check[st['name']]['buy']:
                                     rec = 'B,%s,%s,%s\n' % (
                                     diff, st['now'], st['time'])
-                                    if st['now'] * diff > 1000000:  # 发出买入指令
+                                    if st['now'] * diff > VALVE:  # 发出买入指令
+
+                                        dadan = StockDaDantHistory(code=code, time=st['time'], date=st['date'], name=st['name'],
+                                                                   type='B', count=diff, price=st['now'], high=st['high'], low=st['low'])
+                                        add_to_db(dadan)
+
                                         if code not in mydata.BUY_COMMAND:
                                             mydata.BUY_COMMAND[code] = []
                                             mydata.BUY_COMMAND[code].append(
@@ -123,7 +142,10 @@ def get_real(candi):
                                 else:
                                     rec = 'S,%s,%s,%s\n' % (
                                     diff, st['now'], st['time'])
-                                    if st['now'] * diff > 1000000:  # 发出卖出指令
+                                    if st['now'] * diff > VALVE:  # 发出卖出指令
+                                        dadan = StockDaDantHistory(code=code, time=st['time'], date=st['date'], name=st['name'],
+                                                                   type='S', count=diff, price=st['now'], high=st['high'], low=st['low'])
+                                        add_to_db(dadan)
                                         if code not in mydata.SELL_COMMAND:
                                             mydata.SELL_COMMAND[code] = []
                                             mydata.SELL_COMMAND[code].append(
@@ -145,7 +167,12 @@ def get_real(candi):
                                             mydata.SELL_COMMAND[code] = []
                             if st['now'] == st['sell']:
                                 rec = 'B,%s,%s,%s\n' % (diff, st['now'], st['time'])
-                                if st['now'] * diff > 1000000:  # 发出买入指令
+                                if st['now'] * diff > VALVE:  # 发出买入指令
+                                    dadan = StockDaDantHistory(code=code, time=st['time'], date=st['date'],
+                                                               name=st['name'],
+                                                               type='B', count=diff, price=st['now'], high=st['high'],
+                                                               low=st['low'])
+                                    add_to_db(dadan)
                                     if code not in mydata.BUY_COMMAND:
                                         mydata.BUY_COMMAND[code] = []
                                         mydata.BUY_COMMAND[code].append(
@@ -166,7 +193,7 @@ def get_real(candi):
                                                 mydata.BUY_COMMAND[code]))
                             # else:
                             #     rec = 'B,%s,%s,%s\n' % (diff, st['now'], st['time'])
-                            #     if st['now']*diff > 1000000:  # 发出买入指令
+                            #     if st['now']*diff > VALVE:  # 发出买入指令
                             #         if code not in mydata.BUY_COMMAND:
                             #             mydata.BUY_COMMAND[code] = []
                             #             mydata.BUY_COMMAND[code].append('buy %s at %s with price %s\n' % (code, time.ctime(), st['now']))
@@ -183,7 +210,10 @@ def get_real(candi):
                             if st['now'] == st['sell']:
                                 if st['sell'] < last_check[st['name']]['sell']:
                                     rec = 'S,%s,%s,%s\n' % (diff, st['buy'], st['time'])
-                                    if st['now'] * diff > 1000000:  # 发出卖出指令
+                                    if st['now'] * diff > VALVE:  # 发出卖出指令
+                                        dadan = StockDaDantHistory(code=code, time=st['time'], date=st['date'], name=st['name'],
+                                                                   type='S', count=diff, price=st['now'], high=st['high'], low=st['low'])
+                                        add_to_db(dadan)
                                         if code not in mydata.SELL_COMMAND:
                                             mydata.SELL_COMMAND[code] = []
                                             mydata.SELL_COMMAND[code].append(
@@ -207,7 +237,13 @@ def get_real(candi):
                                     rec = 'M,%s,%s,%s\n' % (diff, st['buy'], st['time'])
                             else:
                                 rec = 'S,%s,%s,%s\n' % (diff, st['now'], st['time'])
-                                if st['now'] * diff > 1000000:  # 发出卖出指令
+                                if st['now'] * diff > VALVE:  # 发出卖出指令
+                                    print('over %s' % VALVE)
+                                    dadan = StockDaDantHistory(code=code, time=st['time'], date=st['date'],
+                                                               name=st['name'],
+                                                               type='S', count=diff, price=st['now'], high=st['high'],
+                                                               low=st['low'])
+                                    add_to_db(dadan)
                                     if code not in mydata.SELL_COMMAND:
                                         mydata.SELL_COMMAND[code] = []
                                         mydata.SELL_COMMAND[code].append(
@@ -225,7 +261,12 @@ def get_real(candi):
                             if not (st['sell'] < last_check[st['name']]['sell']):
                                 rec = 'B,%s,%s,%s\n' % (
                                 diff, st['now'], st['time'])
-                                if st['now'] * diff > 1000000:  # 发出买入指令
+                                if st['now'] * diff > VALVE:  # 发出买入指令
+                                    dadan = StockDaDantHistory(code=code, time=st['time'], date=st['date'],
+                                                               name=st['name'],
+                                                               type='B', count=diff, price=st['now'], high=st['high'],
+                                                               low=st['low'])
+                                    add_to_db(dadan)
                                     if code not in mydata.BUY_COMMAND:
                                         mydata.BUY_COMMAND[code] = []
                                         mydata.BUY_COMMAND[code].append(
@@ -264,6 +305,7 @@ def get_real(candi):
                 continue
         print('now is %s' % time.ctime())
         time.sleep(2)
+
 
 if __name__ == '__main__':
     # candi = candidate_code.get_candidate_code()

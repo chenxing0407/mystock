@@ -38,6 +38,14 @@ http://vip.stock.finance.sina.com.cn/quotes_service/view/vMS_tradedetail.php?sym
 
 
 
+    
 
-
+{'000401': {'name': '冀东水泥', 'open': 16.09, 'close': 16.12, 'now': 16.25, 'high': 16.27, 
+'low': 15.86, 'buy': 16.24, 'sell': 16.25, 'turnover': 50434699, 'volume': 813348476.35,
+ 'bid1_volume': 158400, 'bid1': 16.24, 'bid2_volume': 62266, 'bid2': 16.23, 
+ 'bid3_volume': 34500, 'bid3': 16.22, 'bid4_volume': 63100, 'bid4': 16.21, 'bid5_volume': 78400, 
+ 'bid5': 16.2, 'ask1_volume': 311008, 'ask1': 16.25, 'ask2_volume': 536588, 'ask2': 16.26, 
+ 'ask3_volume': 292100, 'ask3': 16.27, 'ask4_volume': 255500, 'ask4': 16.28, 
+ 'ask5_volume': 269900, 'ask5': 16.29, 
+ 'date': '2017-06-21', 'time': '15:05:03'}}
 
